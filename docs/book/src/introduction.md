@@ -39,13 +39,18 @@ Those constraints turn out to be exactly what autonomous agents need, and the gu
 | Component | What it is |
 |---|---|
 | `lineage-rs` crate | The guard (`lineage::guard`) and audit log (`lineage::audit`), plus the original identity, governance, provenance, and finance modules |
-| `lineage` CLI | Create keys, append to logs, and verify them |
+| `lineage` CLI | Start projects (`lineage new`), create keys, and verify logs |
 | `guard-server` | The guard over HTTP, for agents in any language, with an operator console for approvals and audits |
 | Python client | `lineage_guard.py`, dependency-free |
 | Example apps | A Claude incident-response agent and a DeepSeek accounts-payable agent, each facing real attacks |
 
+{{#include diagrams/arch.html}}
+
 ## Where to start
 
+- **See it first:** [Lineage in pictures](pictures.md) shows the whole system in seven diagrams, and [Why Lineage](why.md) covers the case for it.
+- **Learn it properly:** [Lineage Mastery](mastery/index.md) is ten runnable levels, from a first guarded action to production.
+- **Start a project:** `lineage new my-agent`. See [Project setup](building/new-project.md).
 - **Building in Rust?** Start with the [Rust quickstart](getting-started/quickstart.md).
 - **Your agent is in Python or another language?** Start with the [guard server quickstart](getting-started/guard-server.md).
 - **Want to see it work first?** Run one of the example apps offline, with no API key: [Claude ops agent](guides/claude-ops-agent.md) or [DeepSeek payments agent](guides/deepseek-payments-agent.md).

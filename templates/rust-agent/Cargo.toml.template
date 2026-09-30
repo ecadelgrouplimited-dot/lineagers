@@ -1,0 +1,8 @@
+[package]
+name = "{{name}}"
+version = "0.1.0"
+edition = "2024"
+
+[dependencies]
+lineage-rs = { version = "0.3", default-features = false }
+serde_json = "1"

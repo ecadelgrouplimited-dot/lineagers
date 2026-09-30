@@ -1,12 +1,35 @@
 # Summary
 
 [Introduction](introduction.md)
+[Lineage in pictures](pictures.md)
+[Why Lineage](why.md)
 
 # Getting started
 
 - [Installation](getting-started/installation.md)
 - [Quickstart: Rust](getting-started/quickstart.md)
 - [Quickstart: guard server and Python](getting-started/guard-server.md)
+
+# Lineage Mastery
+
+- [The ten levels](mastery/index.md)
+    - [1. Your first guarded action](mastery/01-first-action.md)
+    - [2. Budgets and costs](mastery/02-budgets.md)
+    - [3. Scars and termination](mastery/03-scars.md)
+    - [4. Humans in the loop](mastery/04-approvals.md)
+    - [5. Consequences survive restarts](mastery/05-restarts.md)
+    - [6. Proving what happened](mastery/06-audit.md)
+    - [7. The guard server](mastery/07-guard-server.md)
+    - [8. Guarding an LLM loop](mastery/08-llm-loop.md)
+    - [9. Binding approvals to backends](mastery/09-binding.md)
+    - [10. Going to production](mastery/10-production.md)
+
+# Building with Lineage
+
+- [Project setup](building/new-project.md)
+- [Running a project](building/running.md)
+- [Building an app](building/apps.md)
+- [Examples gallery](building/gallery.md)
 
 # Concepts
 

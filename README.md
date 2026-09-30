@@ -11,6 +11,13 @@ Guard state is rebuilt by replaying the verified log, so restarting a process ca
 
 ## Quick start
 
+```bash
+curl -fsSL https://lineagrs.tech/install.sh | sh     # the lineage CLI and guard-server
+lineage new my-agent                                 # a runnable guarded agent (Python; --template rust for Rust)
+```
+
+**New to Lineage?** [Lineage Mastery](https://docs.lineagrs.tech/mastery/index.html) takes you from a first guarded action to production in ten runnable levels (`cargo run --example mastery_01_first_action`). The whole system is also explained in diagrams in [Lineage in pictures](https://docs.lineagrs.tech/pictures.html), and there's a playground at [lineagrs.tech](https://lineagrs.tech/#play).
+
 ### In Rust
 
 ```toml
@@ -121,7 +128,7 @@ The crate is modular. The core has no network, UI, or async dependencies.
 | Feature | Default | Adds |
 |---|---|---|
 | `finance` | yes | `finance` module (reqwest, tokio) |
-| `cli` | yes | `lineage` binary (`demo`, `audit keygen/pubkey/append/show/verify`) |
+| `cli` | yes | `lineage` binary (`new`, `audit keygen/pubkey/append/show/verify`, `demo`) |
 | `ml` | no | `finance::ml` (ndarray) |
 
 ## Apps

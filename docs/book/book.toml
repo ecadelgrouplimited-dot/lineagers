@@ -6,6 +6,7 @@ language = "en"
 src = "src"
 
 [output.html]
+additional-css = ["theme/lineage.css"]
 site-url = "/"
 default-theme = "light"
 preferred-dark-theme = "navy"

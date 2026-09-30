@@ -499,7 +499,30 @@ impl Guard {
             return Err(GuardError::InvalidLog("log has no policy record".into()));
         }
         let agent_id = log.log_id().to_string();
-        Ok(Guard { log, state, agent_id })
+        let mut guard = Guard { log, state, agent_id };
+        guard.terminate_if_record_missing()?;
+        Ok(guard)
+    }
+
+    /// An honest guard writes `terminated` in the same step that crosses the scar limit
+    /// or spends the last credit. A log that shows either without that record has had its
+    /// tail cut off; terminate now instead of letting the agent act again.
+    fn terminate_if_record_missing(&mut self) -> Result<(), GuardError> {
+        if !self.is_alive() {
+            return Ok(());
+        }
+        let policy = self.state.policy();
+        let reason = if !self.state.scars.is_empty() && self.state.scar_score >= policy.scar_limit {
+            Some(format!("scar limit reached ({} >= {}); termination record missing from the log", self.state.scar_score, policy.scar_limit))
+        } else if self.state.allowed > 0 && self.state.remaining() == 0 {
+            Some("budget exhausted; termination record missing from the log".to_string())
+        } else {
+            None
+        };
+        match reason {
+            Some(reason) => self.commit(kinds::TERMINATED, json!({ "reason": reason, "by": "guard (replay)" })),
+            None => Ok(()),
+        }
     }
 
     pub fn agent_id(&self) -> &str {
@@ -859,6 +882,25 @@ mod tests {
         let mut guard = reopen(&dir, guard);
         assert!(!guard.is_alive());
         assert!(matches!(guard.terminate("again", "oncall"), Err(GuardError::AlreadyTerminated(_))));
+        assert!(!guard.request("search", json!({}), None).unwrap().is_allowed());
+    }
+
+    #[test]
+    fn test_deleting_the_termination_record_does_not_revive() {
+        let (dir, mut guard) = setup("untruncate", basic_policy().scar_limit(3));
+        guard.request("shell", json!({}), None).unwrap();
+        assert!(!guard.is_alive());
+        drop(guard);
+
+        // Cut the `terminated` record off the end: the shorter chain still verifies.
+        let path = dir.0.join("agent.jsonl");
+        let text = fs::read_to_string(&path).unwrap();
+        let kept: Vec<&str> = text.lines().filter(|l| !l.contains("\"kind\":\"terminated\"")).collect();
+        fs::write(&path, kept.join("\n") + "\n").unwrap();
+
+        let mut guard = Guard::open(&path, AuditKey::load(dir.0.join("audit.key")).unwrap()).unwrap();
+        assert!(!guard.is_alive());
+        assert!(guard.status().termination_reason.unwrap().contains("termination record missing"));
         assert!(!guard.request("search", json!({}), None).unwrap().is_allowed());
     }
 

@@ -22,7 +22,7 @@ Lineage is a control for **what an agent decides to do**. Read this page to know
 | `token.key` | The thief can mint any agent's token |
 | An agent token | Act as that one agent, within its policy |
 
-**Publish checkpoints.** Without them, whoever holds the signing key, or can delete a log's tail, can make history shorter without detection.
+**Publish checkpoints.** Without them, whoever holds the signing key, or can delete a log's tail, can make history shorter without detection. The guard does defend against the simplest version: if a replayed log shows the scar limit reached or the budget spent, but no `terminated` record, the guard terminates the agent on open, with the reason `termination record missing from the log`. Cutting further back than that is only detectable against a checkpoint.
 
 **Put TLS in front of the guard server.** It speaks plain HTTP, and tokens are bearer credentials. Bind it to localhost and use a reverse proxy; see [Deploying](../guides/deploying.md).
 

@@ -1,0 +1,10 @@
+{
+  "budget": 100,
+  "scar_limit": 10,
+  "rate_limit": { "max_actions": 30, "window_secs": 60 },
+  "tools": {
+    "llm_turn":     { "cost": 1, "max_calls": 50 },
+    "lookup_order": { "cost": 0 },
+    "issue_refund": { "cost": 5, "requires_approval": true, "max_calls": 20 }
+  }
+}

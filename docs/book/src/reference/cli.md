@@ -6,7 +6,19 @@ lineage [COMMAND]
 Commands:
   demo   Walk through the core principles (default)
   audit  Tamper-evident audit logs
+  new    Create a new guarded-agent project from a template
 ```
+
+## `lineage new <NAME> [--template python|rust]`
+
+Creates a runnable project in `./<NAME>`, and refuses if the directory exists. `NAME` is also the agent's ID: it must start with a letter and use letters, digits, `-` and `_`.
+
+| Template | What you get |
+|---|---|
+| `python` (default) | A refund-support agent for the guard server: `agent.py`, `model.py`, `policy.json`, `lineage_guard.py`, and a test |
+| `rust` | An in-process deploy agent: `Cargo.toml` and `src/main.rs` |
+
+See [Project setup](../building/new-project.md).
 
 ## `lineage audit keygen <PATH>`
 

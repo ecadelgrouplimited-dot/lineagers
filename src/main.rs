@@ -26,6 +26,67 @@ enum Command {
     /// Tamper-evident audit logs
     #[command(subcommand)]
     Audit(AuditCommand),
+    /// Create a new guarded-agent project from a template
+    New {
+        /// Project directory and agent name (letters, digits, - and _)
+        name: String,
+        /// python: a support agent using the guard server; rust: an in-process deploy agent
+        #[arg(long, value_parser = ["python", "rust"], default_value = "python")]
+        template: String,
+    },
+}
+
+/// Project templates, compiled into the binary: (path in the new project, contents).
+const PYTHON_TEMPLATE: &[(&str, &str)] = &[
+    ("agent.py", include_str!("../templates/python-agent/agent.py")),
+    ("model.py", include_str!("../templates/python-agent/model.py")),
+    ("policy.json", include_str!("../templates/python-agent/policy.json")),
+    ("README.md", include_str!("../templates/python-agent/README.md")),
+    ("tests/test_agent.py", include_str!("../templates/python-agent/tests/test_agent.py")),
+    (".gitignore", include_str!("../templates/python-agent/gitignore")),
+    ("lineage_guard.py", include_str!("../templates/python-agent/lineage_guard.py")),
+];
+
+const RUST_TEMPLATE: &[(&str, &str)] = &[
+    ("Cargo.toml", include_str!("../templates/rust-agent/Cargo.toml.template")),
+    ("src/main.rs", include_str!("../templates/rust-agent/src/main.rs")),
+    ("README.md", include_str!("../templates/rust-agent/README.md")),
+    (".gitignore", include_str!("../templates/rust-agent/gitignore")),
+];
+
+fn new_project(name: &str, template: &str) -> Result<(), Box<dyn std::error::Error>> {
+    let valid = name.chars().next().is_some_and(|c| c.is_ascii_alphabetic())
+        && name.len() <= 64
+        && name.chars().all(|c| c.is_ascii_alphanumeric() || c == '-' || c == '_');
+    if !valid {
+        return Err("name must start with a letter and use only letters, digits, - and _ (max 64)".into());
+    }
+    let dir = PathBuf::from(name);
+    if dir.exists() {
+        return Err(format!("{} already exists", dir.display()).into());
+    }
+    let files = if template == "rust" { RUST_TEMPLATE } else { PYTHON_TEMPLATE };
+    for (path, contents) in files {
+        let target = dir.join(path);
+        if let Some(parent) = target.parent() {
+            std::fs::create_dir_all(parent)?;
+        }
+        std::fs::write(&target, contents.replace("{{name}}", name))?;
+    }
+
+    println!("created {name}/ ({template} template)\n");
+    for (path, _) in files {
+        println!("  {name}/{path}");
+    }
+    println!("\nnext:");
+    if template == "rust" {
+        println!("  cd {name}\n  cargo run");
+    } else {
+        println!("  guard-server                       # in another terminal, if it isn't running");
+        println!("  cd {name}\n  python3 agent.py --auto-approve");
+    }
+    println!("\nguide: https://docs.lineagrs.tech/building/new-project.html");
+    Ok(())
 }
 
 #[derive(Subcommand)]
@@ -82,6 +143,13 @@ fn main() -> ExitCode {
             run_demo();
             ExitCode::SUCCESS
         }
+        Command::New { name, template } => match new_project(&name, &template) {
+            Ok(()) => ExitCode::SUCCESS,
+            Err(e) => {
+                eprintln!("error: {}", e);
+                ExitCode::from(2)
+            }
+        },
         Command::Audit(command) => match run_audit(command) {
             Ok(code) => code,
             Err(e) => {
@@ -421,3 +489,17 @@ fn run_demo() {
 // }
 //
 // This is intentional. Identity cannot be duplicated.
+
+#[cfg(test)]
+mod tests {
+    /// The Python template ships its own copy of the guard client (the crate package can't
+    /// include apps/guard-server). Keep the copy identical to the original.
+    #[test]
+    fn template_guard_client_matches_the_original() {
+        assert_eq!(
+            include_str!("../templates/python-agent/lineage_guard.py"),
+            include_str!("../apps/guard-server/clients/python/lineage_guard.py"),
+            "copy apps/guard-server/clients/python/lineage_guard.py to templates/python-agent/"
+        );
+    }
+}

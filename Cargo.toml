@@ -12,7 +12,7 @@ homepage = "https://lineagrs.tech"
 keywords = ["ai-safety", "agents", "audit-log", "tamper-evident", "accountability"]
 categories = ["cryptography", "development-tools", "simulation"]
 license = "MIT"
-include = ["/src/**/*.rs", "/README.md", "/CHANGELOG.md", "/LICENSE"]
+include = ["/src/**/*.rs", "/templates/**", "/README.md", "/CHANGELOG.md", "/LICENSE"]
 
 [lib]
 name = "lineage"
