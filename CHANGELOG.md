@@ -5,6 +5,57 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [Unreleased]
+
+### Added
+- `apps/deepseek-payments-agent`: an accounts-payable agent on DeepSeek V4.x. A `deepseek-flash` clerk and a
+  `deepseek-v4-pro` fraud reviewer work under the guard, whose budget is the agent's spending authority. Layered
+  approval runs hard rules, then the model, then humans above a limit. The bank enforces guard approvals itself
+  (exact input match, single use). Includes offline scenarios and 19 tests.
+- Guard actions keep their requested `input` (`GET /v1/agents/:id/actions/:action_id` returns it), so tool
+  backends can check that what they execute is exactly what was approved.
+- `guard-server` no longer requires `GUARD_ADMIN_TOKEN`: without it, the server uses `keys/admin.token` in its
+  data directory, creating it on first start. The Python client finds the token (`find_admin_token`,
+  `connect_admin`) and explains setup problems: server not running, token mismatch, or missing key.
+- Approvals take an optional `note`, signed into the log (`Guard::approve_with_note`, `{"approver", "note"}`).
+- `apps/guarded-agent`: an incident-response agent on Claude Opus 5.5 where every model turn and tool
+  call passes through the guard. Includes a prompt-injection scenario, secret redaction, an exfiltration
+  monitor that reports harm, human approvals, a scripted model for offline runs, and integration tests.
+- Operator console in `guard-server` at `/`: agents, approval queue, audit log, log verification, and
+  terminate. It is served with a strict Content Security Policy and renders agent data as text only.
+
+## [0.3.0] - 2026-09-30
+
+### Added
+- `audit` module: persistent, SHA-256 hash-chained, Ed25519-signed audit logs (JSON Lines),
+  with offline verification, checkpoints to detect truncation, and a single-writer file lock.
+- `guard` module: a policy gate for AI agents. Tool allowlists, a finite budget, rate limits,
+  per-tool call caps, human approval, scars, and permanent termination. State is rebuilt by
+  replaying the verified audit log, so restarts cannot refund budget or revive an agent.
+- `lineage audit` CLI: `keygen`, `pubkey`, `append`, `show`, `verify`.
+- `apps/guard-server`: HTTP API for the guard with per-agent tokens, an approval queue,
+  quarantine of tampered logs, a Docker image, and a dependency-free Python client.
+- `guarded_agent` example.
+
+### Changed
+- **Breaking:** the finance module is behind the `finance` feature and the `lineage` binary behind
+  `cli`. Both are on by default. Use `default-features = false` for the lean core.
+- **Breaking:** minimum Rust version is 1.89.
+- Dependencies only used by examples (ratatui, crossterm, plotters, hyper, ...) are now
+  dev-dependencies; unused `image` and `governor` were removed.
+- `reqwest` uses rustls, so OpenSSL is no longer needed to build.
+- The `lineage` binary uses the library instead of recompiling the core modules.
+- Status reports moved to `docs/archive/`, reference docs to `docs/`, and scripts to `scripts/`.
+
+### Fixed
+- Graveyard signing keys were derived from a timestamp and could be guessed; they now come from the OS CSPRNG.
+- Unit tests in `finance::data_providers`, `finance::visualization`, and `finance::ml::market_data` did not compile.
+- The `colors`, `metrics_server`, and `phase3_training_with_evolution` examples did not compile.
+
+### Security
+- `.env` (containing an API key) and `.lineage/keys/tombstone.key` were committed in earlier versions.
+  Both are now untracked and ignored. Rotate any key that was in them.
+
 ## [0.2.0] - 2026-02-01
 
 ### 🚀 Added
