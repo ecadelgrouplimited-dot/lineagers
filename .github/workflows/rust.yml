@@ -22,13 +22,25 @@ jobs:
         rustup default stable
         rustc --version
     - name: Test core only (no default features)
-      run: cargo test --no-default-features --verbose
+      shell: bash
+      run: |
+        set -o pipefail
+        cargo test --no-default-features 2>&1 | tee test-core.log || {
+          grep -E "panicked|FAILED|^error|^---- " test-core.log | head -10 | sed 's/^/::error::/'
+          exit 1
+        }
     - name: Build all targets
       run: cargo build --all-targets --verbose
     - name: Build all targets (ml feature)
       run: cargo build --all-targets --features ml --verbose
     - name: Run tests
-      run: cargo test --features ml --verbose
+      shell: bash
+      run: |
+        set -o pipefail
+        cargo test --features ml 2>&1 | tee test-ml.log || {
+          grep -E "panicked|FAILED|^error|^---- " test-ml.log | head -10 | sed 's/^/::error::/'
+          exit 1
+        }
     - name: Build governance-ops app
       run: cargo build --manifest-path apps/governance-ops/Cargo.toml --verbose
     - name: Build guard-server and CLI
