@@ -4,6 +4,9 @@ Lineage is MIT-licensed and developed at [github.com/ecadelgrouplimited-dot/line
 
 ## Build and test
 
+The tests also build the examples' dev-dependencies, and one of them (`plotters`) needs the system fontconfig headers: `sudo apt-get install libfontconfig1-dev pkg-config` on Debian and Ubuntu, `brew install fontconfig` on macOS. Using the crate as a dependency needs none of this.
+
+
 ```sh
 git clone https://github.com/ecadelgrouplimited-dot/lineagers
 cd lineagers

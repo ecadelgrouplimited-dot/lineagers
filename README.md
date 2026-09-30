@@ -146,7 +146,7 @@ The full list is in [`docs/EXAMPLES.md`](docs/EXAMPLES.md). Market-data examples
 
 ## Development
 
-Requires Rust 1.89+.
+Requires Rust 1.89+. Running the tests also needs the fontconfig headers for a dev-dependency (`sudo apt-get install libfontconfig1-dev pkg-config`).
 
 ```bash
 cargo test                                   # default features
