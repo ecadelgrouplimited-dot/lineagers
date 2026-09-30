@@ -332,7 +332,7 @@ let evolved = strategy.evolution_generation(100);  // 100 generations
 
 ## Resources
 
-- **Main Docs**: [Lineage GitHub](https://github.com/sisilabsai/lineage)
+- **Main Docs**: [Lineage GitHub](https://github.com/ecadelgrouplimited-dot/lineagers)
 - **Roadmap**: [FINANCE_IMPLEMENTATION_ROADMAP.md](./FINANCE_IMPLEMENTATION_ROADMAP.md)
 - **Vision**: [Lineage Finance Spec Prompt](./LINEAGE_FINANCE_SPEC.md)
 
