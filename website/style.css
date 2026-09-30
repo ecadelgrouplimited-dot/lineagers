@@ -177,3 +177,7 @@ pre { background: var(--code-bg); border: 1px solid var(--border); border-radius
 .files tr:last-child td { border-bottom: none; }
 .files a { color: var(--accent); text-decoration: none; font-family: var(--mono); font-size: 14px; }
 .files .hash { font-family: var(--mono); font-size: 12px; color: var(--muted); word-break: break-all; min-width: 240px; }
+.note { font-size: 15px; margin-top: 12px; }
+.table-card { margin-top: 40px; padding: 0; overflow-x: auto; }
+.subhead { margin-top: 40px; }
+.cards.tight { margin-top: 16px; }

@@ -63,12 +63,45 @@ async fn main() {
     }
 }
 
+const HELP: &str = "guard-server: HTTP policy gate and tamper-evident audit trail for AI agents
+
+Usage: guard-server [--help | --version]
+
+Configuration (environment):
+  GUARD_DATA_DIR     keys and agent logs (default: ./guard-data)
+  GUARD_BIND         listen address (default: 127.0.0.1:9200)
+  GUARD_ADMIN_TOKEN  operator token, 32+ characters
+                     (default: <data dir>/keys/admin.token, created on first start)
+
+Docs: https://docs.lineagrs.tech/getting-started/guard-server.html
+";
+
 async fn run() -> Result<(), String> {
+    if let Some(arg) = env::args().nth(1) {
+        match arg.as_str() {
+            "-h" | "--help" => {
+                print!("{}", HELP);
+                return Ok(());
+            }
+            "-V" | "--version" => {
+                println!("guard-server {}", env!("CARGO_PKG_VERSION"));
+                return Ok(());
+            }
+            other => return Err(format!("unknown argument '{}' (try --help)", other)),
+        }
+    }
+
     let data_dir = PathBuf::from(env::var("GUARD_DATA_DIR").unwrap_or_else(|_| "guard-data".to_string()));
     let bind: SocketAddr = env::var("GUARD_BIND")
         .unwrap_or_else(|_| "127.0.0.1:9200".to_string())
         .parse()
         .map_err(|e| format!("invalid GUARD_BIND: {}", e))?;
+
+    // Claim the port before touching the data directory, so a second instance exits here
+    // instead of opening (and failing to lock) another server's logs.
+    let listener = TcpListener::bind(bind)
+        .await
+        .map_err(|e| format!("cannot listen on {}: {} (is another guard-server running?)", bind, e))?;
 
     let keys_dir = data_dir.join("keys");
     let agents_dir = data_dir.join("agents");
@@ -103,7 +136,6 @@ async fn run() -> Result<(), String> {
     });
 
     let app = router(state.clone());
-    let listener = TcpListener::bind(bind).await.map_err(|e| e.to_string())?;
     println!("guard-server listening on http://{}", bind);
     println!("  console     http://{}/", bind);
     println!("  data dir    {}", data_dir.display());

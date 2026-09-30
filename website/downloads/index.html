@@ -40,21 +40,21 @@
       <div class="panel" data-panel="script"><code>curl -fsSL https://lineagrs.tech/install.sh | sh</code><button class="copy">Copy</button></div>
       <div class="panel" data-panel="cargo" hidden><code>cargo install lineage-rs</code><button class="copy">Copy</button></div>
     </div>
-    <p class="muted" style="font-size:15px;margin-top:12px">The script downloads the release below, checks its SHA-256 checksum, and installs <code>lineage</code> and <code>guard-server</code> to <code>~/.local/bin</code>. <a href="/install.sh">Read it first</a>.</p>
+    <p class="muted note">The script downloads the release below, checks its SHA-256 checksum, and installs <code>lineage</code> and <code>guard-server</code> to <code>~/.local/bin</code>. <a href="/install.sh">Read it first</a>.</p>
 
-    <div class="card" style="margin-top:40px;padding:0;overflow-x:auto">
+    <div class="card table-card">
       <table class="files">
         <thead><tr><th>File</th><th>What it is</th><th>SHA-256</th></tr></thead>
         <tbody id="files"><tr><td colspan="3" class="muted">Loading…</td></tr></tbody>
       </table>
     </div>
 
-    <h3 style="margin-top:40px">Verify a download yourself</h3>
+    <h3 class="subhead">Verify a download yourself</h3>
 <pre><code>curl -fsSLO https://lineagrs.tech/downloads/<span class="v">VERSION</span>/SHA256SUMS
 sha256sum --check --ignore-missing SHA256SUMS</code></pre>
 
-    <h3 style="margin-top:40px">Also available</h3>
-    <div class="cards three" style="margin-top:16px">
+    <h3 class="subhead">Also available</h3>
+    <div class="cards three tight">
       <article class="card small"><h3>crates.io</h3><p><code>cargo add lineage-rs</code>, with the API reference on docs.rs.</p></article>
       <article class="card small"><h3>Docker</h3><p>Build the guard-server image from the source: <code>apps/guard-server/Dockerfile</code>.</p></article>
       <article class="card small"><h3>Source</h3><p><a href="https://github.com/ecadelgrouplimited-dot/lineagers">github.com/ecadelgrouplimited-dot/lineagers</a></p></article>
