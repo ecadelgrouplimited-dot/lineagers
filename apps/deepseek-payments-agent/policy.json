@@ -1,0 +1,16 @@
+{
+  "budget": 25000,
+  "scar_limit": 10,
+  "rate_limit": { "max_actions": 60, "window_secs": 60 },
+  "tools": {
+    "llm_turn":                    { "cost": 0, "max_calls": 60 },
+    "list_inbox":                  { "cost": 0 },
+    "read_email":                  { "cost": 0 },
+    "get_invoice":                 { "cost": 0 },
+    "lookup_vendor":               { "cost": 0 },
+    "find_vendor":                 { "cost": 0 },
+    "flag_suspicious":             { "cost": 0 },
+    "request_vendor_verification": { "cost": 0 },
+    "pay_invoice":                 { "cost": 1, "requires_approval": true, "max_calls": 10 }
+  }
+}
