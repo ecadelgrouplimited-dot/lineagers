@@ -356,15 +356,10 @@ impl Tombstone {
             fs::read(&key_file)
                 .map_err(|e| GraveyardError::IoError(format!("Failed to read signing key: {}", e)))?
         } else {
-            // Generate a new key from system entropy
-            use sha2::Sha256;
-            let mut hasher = Sha256::new();
-            let timestamp = std::time::SystemTime::now()
-                .duration_since(std::time::UNIX_EPOCH)
-                .map(|d| d.as_nanos().to_le_bytes().to_vec())
-                .unwrap_or_default();
-            hasher.update(&timestamp);
-            let key_vec = hasher.finalize().to_vec();
+            // Generate a new key from the OS CSPRNG
+            use rand::RngCore;
+            let mut key_vec = vec![0u8; 32];
+            rand::rngs::OsRng.fill_bytes(&mut key_vec);
             
             // Write key securely (readable only by user)
             #[cfg(target_os = "windows")]

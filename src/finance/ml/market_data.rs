@@ -7,7 +7,7 @@ use serde::{Deserialize, Serialize};
 use crate::finance::ml::errors::Result;
 
 /// Historical candle (OHLCV data)
-#[derive(Debug, Clone, Serialize, Deserialize)]
+#[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 pub struct Candle {
     pub timestamp: DateTime<Utc>,
     pub open: f32,

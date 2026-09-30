@@ -323,6 +323,7 @@ mod tests {
         let snapshot = MarketSnapshot {
             timestamp: 1234567890,
             prices,
+            volatility: HashMap::new(),
             source: "Test".to_string(),
         };
 

@@ -153,27 +153,27 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
         let m = &metrics;
         m.cache_hit_rate.set(96.2);
         m.request_success_rate.set(99.8);
-        m.active_connections.set(3);
+        m.active_connections.set(3.0);
 
         // Set initial agent metrics
         m.agent_capital.with_label_values(&["Momentum"]).set(128_960.0);
         m.agent_capital.with_label_values(&["Conservative"]).set(113_666.0);
         m.agent_capital.with_label_values(&["Balanced"]).set(108_135.0);
 
-        m.agent_trades_total.with_label_values(&["Momentum"]).inc_by(35);
-        m.agent_trades_total.with_label_values(&["Conservative"]).inc_by(12);
-        m.agent_trades_total.with_label_values(&["Balanced"]).inc_by(28);
+        m.agent_trades_total.with_label_values(&["Momentum"]).inc_by(35.0);
+        m.agent_trades_total.with_label_values(&["Conservative"]).inc_by(12.0);
+        m.agent_trades_total.with_label_values(&["Balanced"]).inc_by(28.0);
 
         m.agent_win_rate.with_label_values(&["Momentum"]).set(0.58);
         m.agent_win_rate.with_label_values(&["Conservative"]).set(0.52);
         m.agent_win_rate.with_label_values(&["Balanced"]).set(0.62);
 
-        m.agent_scars_total.with_label_values(&["Momentum"]).inc_by(8);
-        m.agent_scars_total.with_label_values(&["Conservative"]).inc_by(6);
-        m.agent_scars_total.with_label_values(&["Balanced"]).inc_by(3);
+        m.agent_scars_total.with_label_values(&["Momentum"]).inc_by(8.0);
+        m.agent_scars_total.with_label_values(&["Conservative"]).inc_by(6.0);
+        m.agent_scars_total.with_label_values(&["Balanced"]).inc_by(3.0);
 
-        m.arena_agent_wins_total.with_label_values(&["Balanced"]).inc_by(12);
-        m.arena_agent_wins_total.with_label_values(&["Momentum"]).inc_by(8);
+        m.arena_agent_wins_total.with_label_values(&["Balanced"]).inc_by(12.0);
+        m.arena_agent_wins_total.with_label_values(&["Momentum"]).inc_by(8.0);
     }
 
     // Spawn background task to update metrics
@@ -214,7 +214,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
             m.uptime_seconds.set(uptime as f64);
 
             // Increment message counter
-            m.messages_broadcast_total.inc_by(5);
+            m.messages_broadcast_total.inc_by(5.0);
         }
     });
 

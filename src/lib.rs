@@ -68,9 +68,12 @@ pub mod behavior;
 pub mod trust;
 pub mod agent;
 pub mod graveyard;
+#[cfg(feature = "finance")]
 pub mod finance;
 pub mod governance;
 pub mod provenance;
+pub mod audit;
+pub mod guard;
 
 // Re-export main types for convenience
 pub use lineage::{Lineage, OperationResult, OperationError, LineageStatus};
@@ -81,9 +84,12 @@ pub use scar::{ScarTissue, Scar, ScarSeverity};
 pub use behavior::{PulseBehavior, PulseOutput};
 pub use trust::{TrustedActor, TrustCapability, TrustResult, ViolationType};
 pub use agent::{TaskAgent, Task, TaskOutcome, TaskResult};
+pub use audit::{AuditKey, AuditLog, AuditError, Checkpoint};
+pub use guard::{Guard, GuardError, Policy, ToolRule, Decision, DenyReason, Outcome, Severity, AgentStatus};
 pub use graveyard::{Graveyard, Tombstone, GraveyardError, IdentityBlock, MetabolicRecord, PathologyReport};
 
 // Finance module re-exports
+#[cfg(feature = "finance")]
 pub use finance::{
     FinanceAgent, FinanceAgentStatus, AgentMetrics,
     Trade, TradeDirection, TradeResult, TradeOperation, ExecutionError,

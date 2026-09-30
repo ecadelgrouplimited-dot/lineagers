@@ -6,9 +6,7 @@ edition = "2021"
 [dependencies]
 anchor-lang = "0.29"
 anchor-spl = "0.29"
-solana-program = "1.17"
-pyth-sdk-solana = "0.8"
-spl-token = "4"
+pyth-sdk-solana = "0.10"
 
 [lib]
 crate-type = ["cdylib", "lib"]

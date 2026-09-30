@@ -16,7 +16,43 @@ jobs:
 
     steps:
     - uses: actions/checkout@v4
-    - name: Build
-      run: cargo build --verbose
+    - name: Test core only (no default features)
+      run: cargo test --no-default-features --verbose
+    - name: Build all targets
+      run: cargo build --all-targets --verbose
+    - name: Build all targets (ml feature)
+      run: cargo build --all-targets --features ml --verbose
     - name: Run tests
-      run: cargo test --verbose
+      run: cargo test --features ml --verbose
+    - name: Build governance-ops app
+      run: cargo build --manifest-path apps/governance-ops/Cargo.toml --verbose
+    - name: Build guard-server and CLI
+      run: |
+        cargo build --manifest-path apps/guard-server/Cargo.toml --verbose
+        cargo build --bin lineage
+    - name: Guard server end-to-end
+      shell: bash
+      run: |
+        export GUARD_ADMIN_TOKEN=$(openssl rand -hex 32)
+        export GUARD_DATA_DIR=$RUNNER_TEMP/guard-data
+        apps/guard-server/target/debug/guard-server > "$RUNNER_TEMP/guard-server.log" 2>&1 &
+        sleep 2
+        python3 apps/guard-server/clients/python/demo_agent.py | tee "$RUNNER_TEMP/demo.out"
+        agent=$(ls $GUARD_DATA_DIR/agents/*.jsonl)
+        key=$(curl -s http://127.0.0.1:9200/v1/public-key | python3 -c 'import sys,json;print(json.load(sys.stdin)["public_key"])')
+        checkpoint=$(grep -o 'checkpoint to publish: [0-9]*:[0-9a-f]*' "$RUNNER_TEMP/demo.out" | awk '{print $4}')
+        target/debug/lineage audit verify "$agent" --public-key "$key" --checkpoint "$checkpoint"
+    - name: DeepSeek payments agent tests
+      shell: bash
+      run: |
+        cd apps/deepseek-payments-agent
+        python3 -m venv .venv
+        .venv/bin/pip install -r requirements.txt
+        .venv/bin/python -m unittest discover -s tests -v
+    - name: Guarded agent tests
+      shell: bash
+      run: |
+        cd apps/guarded-agent
+        python3 -m venv .venv
+        .venv/bin/pip install -r requirements.txt
+        .venv/bin/python -m unittest discover -s tests -v

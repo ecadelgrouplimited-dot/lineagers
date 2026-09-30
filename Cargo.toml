@@ -1,31 +1,18 @@
 [package]
 name = "lineage-rs"
-version = "0.2.2"
+version = "0.3.0"
 edition = "2024"
+rust-version = "1.89"
 authors = ["Lineage Project"]
-description = "Software identity preserved through irreversible change"
-readme = "CRATES_IO_README.md"
+description = "Accountability for autonomous agents: policy guard, finite budgets, permanent consequences, and signed tamper-evident audit logs"
+readme = "README.md"
 repository = "https://github.com/sisilabsai/lineage"
 documentation = "https://docs.rs/lineage-rs"
 homepage = "https://github.com/sisilabsai/lineage"
-keywords = ["identity", "consequence", "immutable", "permanent", "trustworthy"]
-categories = ["development-tools", "simulation"]
+keywords = ["ai-safety", "agents", "audit-log", "tamper-evident", "accountability"]
+categories = ["cryptography", "development-tools", "simulation"]
 license = "MIT"
-exclude = [
-    "*.md",
-    "!README.md",
-    "!CRATES_IO_README.md",
-    "*.png",
-    "*.csv",
-    "*.log",
-    ".github/",
-    "docs/",
-    ".git*",
-    ".lineage/",
-    "libs/",
-    "target/",
-    "examples/",
-]
+include = ["/src/**/*.rs", "/README.md", "/CHANGELOG.md", "/LICENSE"]
 
 [lib]
 name = "lineage"
@@ -34,6 +21,7 @@ path = "src/lib.rs"
 [[bin]]
 name = "lineage"
 path = "src/main.rs"
+required-features = ["cli"]
 
 [dependencies]
 sha2 = "0.10"
@@ -42,27 +30,88 @@ uuid = { version = "1.0", features = ["v4", "serde"] }
 serde = { version = "1.0", features = ["derive"] }
 serde_json = "1.0"
 rand = "0.8"
-ratatui = "0.26"
-crossterm = "0.27"
 hmac = "0.12"
 hex = "0.4"
-clap = { version = "4.4", features = ["derive"] }
-plotters = "0.3"
-gif = "0.13"
-image = "0.24"
-reqwest = { version = "0.11", features = ["json"] }
-tokio = { version = "1.0", features = ["full"] }
-governor = "0.10"
-dotenv = "0.15"
-thiserror = "1.0"
-async-trait = "0.1"
+ed25519-dalek = "2"
+
+# finance
+reqwest = { version = "0.11", default-features = false, features = ["json", "rustls-tls"], optional = true }
+tokio = { version = "1.0", features = ["full"], optional = true }
+thiserror = { version = "1.0", optional = true }
+async-trait = { version = "0.1", optional = true }
+
+# ml
 ndarray = { version = "0.15", optional = true }
 ndarray-rand = { version = "0.14", optional = true }
-rand_distr = "0.4"
+rand_distr = { version = "0.4", optional = true }
+
+# cli
+clap = { version = "4.4", features = ["derive"], optional = true }
+
+[features]
+default = ["finance", "cli"]
+finance = ["dep:reqwest", "dep:tokio", "dep:thiserror", "dep:async-trait"]
+ml = ["finance", "dep:ndarray", "dep:ndarray-rand", "dep:rand_distr"]
+cli = ["dep:clap"]
+
+[dev-dependencies]
+clap = { version = "4.4", features = ["derive"] }
+tokio = { version = "1.0", features = ["full"] }
+reqwest = { version = "0.11", default-features = false, features = ["json", "rustls-tls"] }
+ratatui = "0.26"
+crossterm = "0.27"
+plotters = "0.3"
+gif = "0.13"
+dotenv = "0.15"
 tokio-tungstenite = "0.21"
 futures-util = "0.3"
 hyper = { version = "0.14", features = ["full"] }
+prometheus = { version = "0.13", default-features = false }
 
-[features]
-default = []
-ml = ["ndarray", "ndarray-rand"]
+[[example]]
+name = "phase3_training_with_evolution"
+required-features = ["ml"]
+
+[[example]]
+name = "consensus_arena_tui"
+required-features = ["finance"]
+
+[[example]]
+name = "metrics_server"
+required-features = ["finance"]
+
+[[example]]
+name = "decentralized_trading_agent"
+required-features = ["finance"]
+
+[[example]]
+name = "ml_finance_integration"
+required-features = ["finance"]
+
+[[example]]
+name = "arena_with_live_market"
+required-features = ["finance"]
+
+[[example]]
+name = "training_loop_example"
+required-features = ["finance"]
+
+[[example]]
+name = "metrics_server_v2"
+required-features = ["finance"]
+
+[[example]]
+name = "market_data_integration"
+required-features = ["finance"]
+
+[[example]]
+name = "ml_learning_advanced"
+required-features = ["finance"]
+
+[[example]]
+name = "validate_ml_learning"
+required-features = ["finance"]
+
+[[example]]
+name = "ws_broadcast_v2"
+required-features = ["finance"]

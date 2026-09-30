@@ -1,24 +1,159 @@
-//! # Lineage - Software Identity Through Irreversible Change
+//! # Lineage CLI
 //!
-//! This demonstration shows the core principles of Lineage:
-//! - Unique, non-copyable identity
-//! - Append-only causal memory
-//! - Finite metabolic budget
-//! - Permanent scars
-//! - Irreversible death
+//! - `lineage demo` walks through the core principles: unique identity, append-only
+//!   causal memory, finite metabolic budget, permanent scars, irreversible death.
+//! - `lineage audit ...` creates keys for, inspects, and verifies tamper-evident audit logs.
 
-mod identity;
-mod memory;
-mod metabolism;
-mod scar;
-mod lineage;
-mod behavior;
+use std::path::PathBuf;
+use std::process::ExitCode;
 
-use lineage::{Lineage, OperationError, OperationResult};
-use scar::ScarSeverity;
-use behavior::PulseBehavior;
+use clap::{Parser, Subcommand};
+use lineage::audit::{self, AuditKey, AuditLog, Checkpoint, VerifyOptions};
+use lineage::scar::ScarSeverity;
+use lineage::{Lineage, OperationError, OperationResult, PulseBehavior};
 
-fn main() {
+#[derive(Parser)]
+#[command(name = "lineage", version, about = "Software identity preserved through irreversible change")]
+struct Cli {
+    #[command(subcommand)]
+    command: Option<Command>,
+}
+
+#[derive(Subcommand)]
+enum Command {
+    /// Walk through the core principles (default)
+    Demo,
+    /// Tamper-evident audit logs
+    #[command(subcommand)]
+    Audit(AuditCommand),
+}
+
+#[derive(Subcommand)]
+enum AuditCommand {
+    /// Generate a new signing key file (hex secret, mode 0600)
+    Keygen {
+        /// Where to write the key
+        path: PathBuf,
+    },
+    /// Print the public key for a signing key file
+    Pubkey {
+        path: PathBuf,
+    },
+    /// Verify a log's hash chain and signatures
+    Verify {
+        log: PathBuf,
+        /// Trusted hex public key. Without it the log is only self-attested.
+        #[arg(long)]
+        public_key: Option<String>,
+        /// Published checkpoint as SEQ:HASH; detects truncation and rewrites
+        #[arg(long)]
+        checkpoint: Option<String>,
+        /// Print the report as JSON
+        #[arg(long)]
+        json: bool,
+    },
+    /// Append a record to a log, creating the log if needed. Prints the new head.
+    Append {
+        log: PathBuf,
+        /// Signing key file
+        #[arg(long)]
+        key: PathBuf,
+        #[arg(long)]
+        actor: String,
+        #[arg(long)]
+        kind: String,
+        /// JSON payload
+        #[arg(long, default_value = "{}")]
+        payload: String,
+    },
+    /// Print a log's records
+    Show {
+        log: PathBuf,
+        /// Print raw JSON Lines instead of a table
+        #[arg(long)]
+        json: bool,
+    },
+}
+
+fn main() -> ExitCode {
+    let cli = Cli::parse();
+    match cli.command.unwrap_or(Command::Demo) {
+        Command::Demo => {
+            run_demo();
+            ExitCode::SUCCESS
+        }
+        Command::Audit(command) => match run_audit(command) {
+            Ok(code) => code,
+            Err(e) => {
+                eprintln!("error: {}", e);
+                ExitCode::from(2)
+            }
+        },
+    }
+}
+
+fn run_audit(command: AuditCommand) -> Result<ExitCode, Box<dyn std::error::Error>> {
+    match command {
+        AuditCommand::Keygen { path } => {
+            let key = AuditKey::generate();
+            key.save(&path)?;
+            println!("secret key written to {}", path.display());
+            println!("public key: {}", key.public_key_hex());
+        }
+        AuditCommand::Pubkey { path } => {
+            println!("{}", AuditKey::load(&path)?.public_key_hex());
+        }
+        AuditCommand::Verify { log, public_key, checkpoint, json } => {
+            let checkpoint = checkpoint.map(|c| parse_checkpoint(&c)).transpose()?;
+            let report = audit::verify_file(&log, &VerifyOptions { public_key, checkpoint });
+            if json {
+                println!("{}", serde_json::to_string_pretty(&report)?);
+            } else if report.ok {
+                let head = report.head.as_ref().expect("ok report has a head");
+                println!("OK  {} records, log {}", report.records, report.log_id.as_deref().unwrap_or("?"));
+                println!("    head       {}:{}", head.seq, head.hash);
+                println!("    public key {}", report.public_key.as_deref().unwrap_or("?"));
+                if !report.key_trusted {
+                    println!("    WARNING: no --public-key given; the signature only proves the log is");
+                    println!("    self-consistent, not who wrote it.");
+                }
+            } else {
+                println!("FAILED  {}", report.failure.as_ref().map(|f| f.to_string()).unwrap_or_default());
+            }
+            if !report.ok {
+                return Ok(ExitCode::FAILURE);
+            }
+        }
+        AuditCommand::Append { log, key, actor, kind, payload } => {
+            let payload: serde_json::Value = serde_json::from_str(&payload)?;
+            let log_id = log.file_stem().map(|s| s.to_string_lossy().into_owned()).unwrap_or_default();
+            let mut audit_log = AuditLog::open_or_create(&log, AuditKey::load(&key)?, &log_id)?;
+            let record = audit_log.append(&actor, &kind, payload)?;
+            println!("{}:{}", record.seq, record.hash);
+        }
+        AuditCommand::Show { log, json } => {
+            let records = audit::read_records(&log).map_err(|f| f.to_string())?;
+            for record in records {
+                if json {
+                    println!("{}", serde_json::to_string(&record)?);
+                } else {
+                    println!("{:>6}  {}  {:<16} {:<20} {}", record.seq, record.timestamp, record.actor, record.kind, record.payload);
+                }
+            }
+        }
+    }
+    Ok(ExitCode::SUCCESS)
+}
+
+fn parse_checkpoint(value: &str) -> Result<Checkpoint, String> {
+    let (seq, hash) = value.split_once(':').ok_or("checkpoint must be SEQ:HASH")?;
+    Ok(Checkpoint {
+        seq: seq.parse().map_err(|_| "checkpoint SEQ must be a number")?,
+        hash: hash.to_string(),
+    })
+}
+
+fn run_demo() {
     println!("╔════════════════════════════════════════════════════════════╗");
     println!("║        LINEAGE - Ontological Software Demonstration       ║");
     println!("╚════════════════════════════════════════════════════════════╝\n");
@@ -85,7 +220,7 @@ fn main() {
     let mut pulse_count = 0;
     while lineage.is_alive() && pulse_count < 10 {
         let energy = lineage.metabolism().energy();
-        if energy < 35 && energy >= 15 {
+        if (15..35).contains(&energy) {
             let output = pulse_behavior.execute_pulse(&mut lineage);
             if output.strain_occurred {
                 println!("  Pulse #{}: STRAIN (energy={}, cost={})", 
@@ -171,7 +306,7 @@ fn main() {
     println!("┌─ DEMONSTRATION 5: Energy Exhaustion ────────────────────┐");
     
     match lineage.perform_operation("Expensive AI inference".to_string(), 800) {
-        OperationResult::Success { energy_consumed } => {
+        OperationResult::Success { .. } => {
             println!("✗ This should not have succeeded!");
         }
         OperationResult::InsufficientEnergy { required, available } => {

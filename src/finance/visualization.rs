@@ -351,13 +351,13 @@ mod tests {
 
     #[test]
     fn test_visualizer_creation() {
-        let visualizer = ArenaVisualizer::new(vec![]);
+        let visualizer = ArenaVisualizer::new();
         assert!(visualizer.final_rankings.is_empty());
     }
 
     #[test]
     fn test_ascii_charts_not_empty() {
-        let visualizer = ArenaVisualizer::new(vec![])
+        let visualizer = ArenaVisualizer::new()
             .with_rankings(vec![
                 ("Agent1".to_string(), 105000.0, 5.0, 60.0),
                 ("Agent2".to_string(), 100000.0, 0.0, 0.0),
@@ -374,7 +374,7 @@ mod tests {
 
     #[test]
     fn test_csv_generation() {
-        let visualizer = ArenaVisualizer::new(vec![])
+        let visualizer = ArenaVisualizer::new()
             .with_rankings(vec![("Agent1".to_string(), 105000.0, 5.0, 60.0)]);
 
         let csv = visualizer.generate_csv();
