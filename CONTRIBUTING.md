@@ -39,9 +39,9 @@ Features, convenience, performance, ergonomics, and compatibility are secondary 
 
 Read in order:
 
-1. [MANIFESTO.md](MANIFESTO.md) — The philosophical declaration
-2. [DOCTRINE.md](DOCTRINE.md) — The irreducible principles
-3. [FREEZE.md](FREEZE.md) — The ontological freeze declaration
+1. [MANIFESTO.md](docs/MANIFESTO.md) — The philosophical declaration
+2. [DOCTRINE.md](docs/DOCTRINE.md) — The irreducible principles
+3. [FREEZE.md](docs/FREEZE.md) — The ontological freeze declaration
 4. [README.md](README.md) — The system documentation
 
 If you disagree with irreversibility as a foundational constraint, this project is not for you.
@@ -199,7 +199,7 @@ Questions about:
 - Whether an exception can be made
 - If a bypass is acceptable "just this once"
 
-Are answered in [FREEZE.md](FREEZE.md).
+Are answered in [FREEZE.md](docs/FREEZE.md).
 
 If those documents do not satisfy your question, the answer is: **No.**
 

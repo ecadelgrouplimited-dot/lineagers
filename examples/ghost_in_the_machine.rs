@@ -1,6 +1,6 @@
 /// Lineage: The Ghost in the Machine
 ///
-/// Scenario A from graveyard.md: The "Ghost in the Machine"
+/// Scenario A from docs/archive/graveyard.md: The "Ghost in the Machine"
 ///
 /// This scenario demonstrates the Lazarus Prevention system:
 /// 1. Create an agent
