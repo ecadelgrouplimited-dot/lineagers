@@ -13,7 +13,7 @@ use lineage::scar::ScarSeverity;
 use lineage::{Lineage, OperationError, OperationResult, PulseBehavior};
 
 #[derive(Parser)]
-#[command(name = "lineage", version, about = "Software identity preserved through irreversible change")]
+#[command(name = "lineage", version, about = "Accountability for autonomous agents: tamper-evident audit logs and the Lineage demo")]
 struct Cli {
     #[command(subcommand)]
     command: Option<Command>,

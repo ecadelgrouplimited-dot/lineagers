@@ -1,0 +1,72 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Download Lineage</title>
+<meta name="description" content="Download the Lineage CLI, guard-server, Python client, and source, with SHA-256 checksums.">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="/style.css">
+<script src="/site.js" defer></script>
+<script src="/downloads/downloads.js" defer></script>
+</head>
+<body>
+<header class="nav">
+  <div class="wrap nav-inner">
+    <a class="brand" href="/" aria-label="Lineage home">
+      <svg viewBox="0 0 32 32" aria-hidden="true"><path d="M6 4v24h20" /><circle cx="6" cy="4" r="3" /><circle cx="16" cy="16" r="3" /><circle cx="26" cy="28" r="3" /><path d="M6 16h7M16 19v9" /></svg>
+      <span>lineage</span>
+    </a>
+    <nav class="links" aria-label="Main">
+      <a href="/#why">Why</a>
+      <a href="/#how">How it works</a>
+      <a href="https://docs.lineagrs.tech/">Docs</a>
+      <a class="gh" href="https://github.com/ecadelgrouplimited-dot/lineagers">GitHub</a>
+    </nav>
+  </div>
+</header>
+
+<main class="section">
+  <div class="wrap">
+    <p class="kicker">Downloads</p>
+    <h2>Lineage <span id="version" class="accent">…</span></h2>
+    <p class="section-lede">Prebuilt, statically linked binaries for Linux x86-64: they run on any distribution with no dependencies. On other platforms, install from source with Cargo.</p>
+
+    <div class="install" role="tablist" aria-label="Install">
+      <div class="tabs">
+        <button role="tab" aria-selected="true" data-tab="script">Install script</button>
+        <button role="tab" aria-selected="false" data-tab="cargo">From source</button>
+      </div>
+      <div class="panel" data-panel="script"><code>curl -fsSL https://lineagrs.tech/install.sh | sh</code><button class="copy">Copy</button></div>
+      <div class="panel" data-panel="cargo" hidden><code>cargo install lineage-rs</code><button class="copy">Copy</button></div>
+    </div>
+    <p class="muted" style="font-size:15px;margin-top:12px">The script downloads the release below, checks its SHA-256 checksum, and installs <code>lineage</code> and <code>guard-server</code> to <code>~/.local/bin</code>. <a href="/install.sh">Read it first</a>.</p>
+
+    <div class="card" style="margin-top:40px;padding:0;overflow-x:auto">
+      <table class="files">
+        <thead><tr><th>File</th><th>What it is</th><th>SHA-256</th></tr></thead>
+        <tbody id="files"><tr><td colspan="3" class="muted">Loading…</td></tr></tbody>
+      </table>
+    </div>
+
+    <h3 style="margin-top:40px">Verify a download yourself</h3>
+<pre><code>curl -fsSLO https://lineagrs.tech/downloads/<span class="v">VERSION</span>/SHA256SUMS
+sha256sum --check --ignore-missing SHA256SUMS</code></pre>
+
+    <h3 style="margin-top:40px">Also available</h3>
+    <div class="cards three" style="margin-top:16px">
+      <article class="card small"><h3>crates.io</h3><p><code>cargo add lineage-rs</code>, with the API reference on docs.rs.</p></article>
+      <article class="card small"><h3>Docker</h3><p>Build the guard-server image from the source: <code>apps/guard-server/Dockerfile</code>.</p></article>
+      <article class="card small"><h3>Source</h3><p><a href="https://github.com/ecadelgrouplimited-dot/lineagers">github.com/ecadelgrouplimited-dot/lineagers</a></p></article>
+    </div>
+  </div>
+</main>
+
+<footer class="footer">
+  <div class="wrap footer-inner">
+    <p class="muted">Accountability for autonomous agents. MIT licensed.</p>
+    <nav aria-label="Footer"><a href="/">Home</a><a href="https://docs.lineagrs.tech/">Documentation</a><a href="https://github.com/ecadelgrouplimited-dot/lineagers">GitHub</a></nav>
+  </div>
+</footer>
+</body>
+</html>

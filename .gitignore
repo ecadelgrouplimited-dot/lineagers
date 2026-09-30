@@ -107,3 +107,5 @@ test_quickwins.sh
 guard-data/
 __pycache__/
 .venv/
+dist/
+docs/book/book/

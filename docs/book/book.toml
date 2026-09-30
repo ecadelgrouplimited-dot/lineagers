@@ -1,0 +1,18 @@
+[book]
+title = "Lineage"
+description = "Accountability for autonomous agents: policy guard, finite budgets, permanent consequences, and signed tamper-evident audit logs."
+authors = ["Lineage contributors"]
+language = "en"
+src = "src"
+
+[output.html]
+site-url = "/"
+default-theme = "light"
+preferred-dark-theme = "navy"
+git-repository-url = "https://github.com/ecadelgrouplimited-dot/lineagers"
+edit-url-template = "https://github.com/ecadelgrouplimited-dot/lineagers/edit/main/docs/book/{path}"
+no-section-label = true
+
+[output.html.fold]
+enable = true
+level = 1

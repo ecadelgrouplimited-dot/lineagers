@@ -5,9 +5,11 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [Unreleased]
+## [0.3.0] - 2026-09-30
 
 ### Added
+- Website at lineagrs.tech, documentation at docs.lineagrs.tech, and static Linux x86-64 binaries
+  (`lineage`, `guard-server`) with SHA-256 checksums and a verifying install script.
 - `apps/deepseek-payments-agent`: an accounts-payable agent on DeepSeek V4.x. A `deepseek-flash` clerk and a
   `deepseek-v4-pro` fraud reviewer work under the guard, whose budget is the agent's spending authority. Layered
   approval runs hard rules, then the model, then humans above a limit. The bank enforces guard approvals itself
@@ -23,10 +25,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   monitor that reports harm, human approvals, a scripted model for offline runs, and integration tests.
 - Operator console in `guard-server` at `/`: agents, approval queue, audit log, log verification, and
   terminate. It is served with a strict Content Security Policy and renders agent data as text only.
-
-## [0.3.0] - 2026-09-30
-
-### Added
 - `audit` module: persistent, SHA-256 hash-chained, Ed25519-signed audit logs (JSON Lines),
   with offline verification, checkpoints to detect truncation, and a single-writer file lock.
 - `guard` module: a policy gate for AI agents. Tool allowlists, a finite budget, rate limits,
