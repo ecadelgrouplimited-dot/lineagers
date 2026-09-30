@@ -1,0 +1,80 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Guard Console</title>
+<link rel="stylesheet" href="/console.css">
+<script src="/console.js" defer></script>
+</head>
+<body>
+<header>
+  <h1>Guard Console</h1>
+  <span id="server-key" class="muted"></span>
+  <button id="sign-out" class="link" hidden>Sign out</button>
+</header>
+
+<section id="sign-in" class="card narrow" hidden>
+  <h2>Sign in</h2>
+  <p class="muted">Use the server's admin token. It stays in this browser tab only.</p>
+  <form id="sign-in-form">
+    <label>Admin token <input id="token" type="password" autocomplete="off" required></label>
+    <label>Your name <span class="muted">(recorded on approvals)</span> <input id="approver" required></label>
+    <button type="submit">Sign in</button>
+    <p id="sign-in-error" class="error" hidden></p>
+  </form>
+</section>
+
+<main id="app" hidden>
+  <section class="card">
+    <h2>Agents</h2>
+    <table id="agents">
+      <thead><tr><th>Agent</th><th>State</th><th>Budget</th><th>Scars</th><th>Pending</th></tr></thead>
+      <tbody></tbody>
+    </table>
+    <p id="no-agents" class="muted" hidden>No agents yet.</p>
+  </section>
+
+  <section id="detail" hidden>
+    <div class="card">
+      <div class="row">
+        <h2 id="detail-title"></h2>
+        <div class="actions">
+          <button id="verify">Verify log</button>
+          <button id="terminate" class="danger">Terminate</button>
+        </div>
+      </div>
+      <p id="verify-result" hidden></p>
+      <dl id="detail-stats" class="stats"></dl>
+      <ul id="detail-scars" class="scars"></ul>
+    </div>
+
+    <div class="card">
+      <h2>Waiting for approval</h2>
+      <div id="pending"></div>
+      <p id="no-pending" class="muted">Nothing is waiting.</p>
+    </div>
+
+    <div class="card">
+      <h2>Audit log <span class="muted" id="log-head"></span></h2>
+      <table id="log">
+        <thead><tr><th>#</th><th>Time</th><th>Kind</th><th>Details</th></tr></thead>
+        <tbody></tbody>
+      </table>
+    </div>
+  </section>
+</main>
+
+<template id="pending-item">
+  <div class="pending">
+    <div class="row"><strong class="tool"></strong><span class="muted when"></span></div>
+    <pre class="input"></pre>
+    <div class="actions">
+      <button class="approve">Approve</button>
+      <button class="reject">Reject</button>
+      <button class="reject-scar danger">Reject and scar</button>
+    </div>
+  </div>
+</template>
+</body>
+</html>

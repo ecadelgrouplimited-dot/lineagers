@@ -1,0 +1,18 @@
+[package]
+name = "guard-server"
+version = "0.1.0"
+edition = "2024"
+rust-version = "1.89"
+description = "HTTP policy gate and tamper-evident audit trail for AI agents, built on Lineage"
+license = "MIT"
+
+[dependencies]
+axum = "0.7"
+tokio = { version = "1", features = ["full"] }
+serde = { version = "1", features = ["derive"] }
+serde_json = "1"
+hmac = "0.12"
+sha2 = "0.10"
+hex = "0.4"
+rand = "0.8"
+lineage = { path = "../..", package = "lineage-rs", default-features = false }
